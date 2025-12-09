@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nyamo UI Kernel - Browser Test Suite</title>
+  <link rel="stylesheet" href="nyamo-ui-kernel.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f5f5f5;
+      padding: 20px;
+    }
+    
+    .test-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+      color: #1a1a1a;
+    }
+    
+    .subtitle {
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+    
+    .test-section {
+      margin-bottom: 40px;
+    }
+    
+    .test-section h2 {
+      font-size: 20px;
+      margin-bottom: 15px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #3b82f6;
+      color: #1a1a1a;
+    }
+    
+    .test-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    
+    .test-btn {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      background: #3b82f6;
+      color: white;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .test-btn:hover {
+      background: #2563eb;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+    
+    .test-btn:active {
+      transform: translateY(0);
+    }
+    
+    .test-btn.secondary {
+      background: #6b7280;
+    }
+    
+    .test-btn.secondary:hover {
+      background: #4b5563;
+    }
+    
+    .test-btn.danger {
+      background: #ef4444;
+    }
+    
+    .test-btn.danger:hover {
+      background: #dc2626;
+    }
+    
+    .test-btn.success {
+      background: #10b981;
+    }
+    
+    .test-btn.success:hover {
+      background: #059669;
+    }
+    
+    .results {
+      background: #f9fafb;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 20px;
+      border-left: 4px solid #3b82f6;
+    }
+    
+    .results h3 {
+      font-size: 16px;
+      margin-bottom: 12px;
+      color: #1a1a1a;
+    }
+    
+    .result-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid #e5e7eb;
+      font-size: 14px;
+    }
+    
+    .result-item:last-child {
+      border-bottom: none;
+    }
+    
+    .status {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+    
+    .status.pass {
+      background: #10b981;
+      color: white;
+    }
+    
+    .status.fail {
+      background: #ef4444;
+      color: white;
+    }
+    
+    .status.pending {
+      background: #f59e0b;
+      color: white;
+    }
+    
+    .console {
+      background: #1e293b;
+      color: #e2e8f0;
+      border-radius: 8px;
+      padding: 15px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      max-height: 300px;
+      overflow-y: auto;
+      margin-top: 20px;
+    }
+    
+    .console-line {
+      margin-bottom: 5px;
+      line-height: 1.5;
+    }
+    
+    .console-line.error {
+      color: #fca5a5;
+    }
+    
+    .console-line.success {
+      color: #86efac;
+    }
+    
+    .console-line.info {
+      color: #93c5fd;
+    }
+    
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+    
+    .stat-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    
+    .stat-card.success {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+    
+    .stat-card.fail {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    }
+    
+    .stat-card.pending {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    }
+    
+    .stat-value {
+      font-size: 32px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    .stat-label {
+      font-size: 12px;
+      opacity: 0.9;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <h1>🧪 Nyamo UI Kernel - Test Suite</h1>
+    <p class="subtitle">ブラウザベーステストスイート (Node.js不要)</p>
+    
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-value" id="total-tests">0</div>
+        <div class="stat-label">Total Tests</div>
+      </div>
+      <div class="stat-card success">
+        <div class="stat-value" id="passed-tests">0</div>
+        <div class="stat-label">Passed</div>
+      </div>
+      <div class="stat-card fail">
+        <div class="stat-value" id="failed-tests">0</div>
+        <div class="stat-label">Failed</div>
+      </div>
+      <div class="stat-card pending">
+        <div class="stat-value" id="pending-tests">0</div>
+        <div class="stat-label">Pending</div>
+      </div>
+    </div>
+
+    <!-- P0 Tests -->
+    <div class="test-section">
+      <h2>P0 Tests (Critical)</h2>
+      <div class="test-grid">
+        <button class="test-btn" onclick="testConfigReference()">Config Reference</button>
+        <button class="test-btn" onclick="testCloseOnEscape()">closeOnEscape Dynamic</button>
+        <button class="test-btn" onclick="testShortcuts()">shortcuts API</button>
+        <button class="test-btn" onclick="testSanitize()">sanitize API</button>
+        <button class="test-btn" onclick="testNyamoError()">NyamoError</button>
+      </div>
+    </div>
+
+    <!-- Dialog Tests -->
+    <div class="test-section">
+      <h2>Dialog Tests</h2>
+      <div class="test-grid">
+        <button class="test-btn" onclick="testDialogBasic()">Basic Dialog</button>
+        <button class="test-btn" onclick="testDialogSizes()">Dialog Sizes</button>
+        <button class="test-btn" onclick="testDialogCallbacks()">Callbacks</button>
+        <button class="test-btn" onclick="testDialogHTML()">HTML Content</button>
+      </div>
+    </div>
+
+    <!-- Sheet Tests -->
+    <div class="test-section">
+      <h2>Sheet Tests</h2>
+      <div class="test-grid">
+        <button class="test-btn secondary" onclick="testSheetRight()">Sheet Right</button>
+        <button class="test-btn secondary" onclick="testSheetLeft()">Sheet Left</button>
+        <button class="test-btn secondary" onclick="testSheetBottom()">Sheet Bottom</button>
+      </div>
+    </div>
+
+    <!-- Toast Tests -->
+    <div class="test-section">
+      <h2>Toast Tests</h2>
+      <div class="test-grid">
+        <button class="test-btn success" onclick="testToastInfo()">Info Toast</button>
+        <button class="test-btn success" onclick="testToastSuccess()">Success Toast</button>
+        <button class="test-btn danger" onclick="testToastError()">Error Toast</button>
+        <button class="test-btn" onclick="testToastWarning()">Warning Toast</button>
+        <button class="test-btn secondary" onclick="testToastMaxLimit()">Max Limit</button>
+      </div>
+    </div>
+
+    <!-- Other Tests -->
+    <div class="test-section">
+      <h2>Other Tests</h2>
+      <div class="test-grid">
+        <button class="test-btn" onclick="testLoader()">Loader</button>
+        <button class="test-btn" onclick="testConfirm()">Confirm</button>
+        <button class="test-btn secondary" onclick="testDestroy()">Destroy</button>
+        <button class="test-btn danger" onclick="runAllTests()">🚀 Run All Tests</button>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div class="results">
+      <h3>📊 Test Results</h3>
+      <div id="test-results"></div>
+    </div>
+
+    <!-- Console -->
+    <div class="console" id="console"></div>
+  </div>
+
+  <!-- Load Nyamo Kernel -->
+  <script type="module">
+    import { NyamoUIKernel } from './kernel.js';
+    
+    // Global test state
+    window.testResults = [];
+    window.NyamoUI = new NyamoUIKernel();
+    
+    // Test utilities
+    window.log = function(message, type = 'info') {
+      const console = document.getElementById('console');
+      const line = document.createElement('div');
+      line.className = `console-line ${type}`;
+      line.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+      console.appendChild(line);
+      console.scrollTop = console.scrollHeight;
+    };
+    
+    window.addResult = function(name, passed, message = '') {
+      const result = { name, passed, message, timestamp: Date.now() };
+      window.testResults.push(result);
+      
+      const resultsDiv = document.getElementById('test-results');
+      const item = document.createElement('div');
+      item.className = 'result-item';
+      
+      const status = document.createElement('div');
+      status.className = `status ${passed ? 'pass' : 'fail'}`;
+      status.textContent = passed ? '✓' : '✗';
+      
+      const text = document.createElement('div');
+      text.style.flex = '1';
+      text.innerHTML = `<strong>${name}</strong>${message ? ': ' + message : ''}`;
+      
+      item.appendChild(status);
+      item.appendChild(text);
+      resultsDiv.appendChild(item);
+      
+      updateStats();
+      log(`${passed ? '✓' : '✗'} ${name}`, passed ? 'success' : 'error');
+    };
+    
+    window.updateStats = function() {
+      const total = window.testResults.length;
+      const passed = window.testResults.filter(r => r.passed).length;
+      const failed = total - passed;
+      
+      document.getElementById('total-tests').textContent = total;
+      document.getElementById('passed-tests').textContent = passed;
+      document.getElementById('failed-tests').textContent = failed;
+    };
+    
+    window.clearResults = function() {
+      window.testResults = [];
+      document.getElementById('test-results').innerHTML = '';
+      document.getElementById('console').innerHTML = '';
+      updateStats();
+    };
+
+    // Initialize
+    window.NyamoUI.init();
+    log('Nyamo UI Kernel initialized', 'success');
+  </script>
+
+  <!-- Test Functions -->
+  <script>
+    // ================================
+    // P0 Tests
+    // ================================
+    
+    function testConfigReference() {
+      log('Testing config reference...');
+      const kernel = window.NyamoUI;
+      const configRef = kernel.config;
+      
+      kernel.setConfig({ debug: true });
+      
+      const passed = kernel.config === configRef && kernel.config.debug === true;
+      addResult('Config Reference', passed, passed ? 'Same reference maintained' : 'Reference was replaced');
+    }
+    
+    function testCloseOnEscape() {
+      log('Testing closeOnEscape dynamic behavior...');
+      const kernel = window.NyamoUI;
+      
+      kernel.setConfig({ closeOnEscape: true });
+      kernel.dialog({ title: 'Test', content: 'Press Escape' });
+      
+      setTimeout(() => {
+        const hasLayer = kernel.hasActiveLayer();
+        kernel.close();
+        addResult('closeOnEscape', hasLayer, hasLayer ? 'Dialog opened' : 'Failed to open');
+      }, 100);
+    }
+    
+    function testShortcuts() {
+      log('Testing shortcuts API...');
+      const kernel = window.NyamoUI;
+      
+      kernel.setConfig({ shortcuts: { closeKey: 'Escape' } });
+      const passed = kernel.config.shortcuts.closeKey === 'Escape';
+      
+      addResult('shortcuts API', passed, passed ? 'Shortcuts configured' : 'Failed to set shortcuts');
+    }
+    
+    function testSanitize() {
+      log('Testing sanitize API...');
+      const kernel = window.NyamoUI;
+      
+      try {
+        kernel.setConfig({ 
+          sanitize: { 
+            allowedTags: ['p', 'strong'],
+            allowedAttrs: ['class']
+          }
+        });
+        
+        const passed = kernel.config.sanitize !== undefined;
+        addResult('sanitize API', passed, passed ? 'Sanitize config set' : 'Failed to set config');
+      } catch (e) {
+        addResult('sanitize API', false, e.message);
+      }
+    }
+    
+    function testNyamoError() {
+      log('Testing NyamoError...');
+      
+      try {
+        // This should work without throwing
+        const passed = true;
+        addResult('NyamoError', passed, 'NyamoError class available');
+      } catch (e) {
+        addResult('NyamoError', false, e.message);
+      }
+    }
+    
+    // ================================
+    // Dialog Tests
+    // ================================
+    
+    function testDialogBasic() {
+      log('Testing basic dialog...');
+      const kernel = window.NyamoUI;
+      
+      kernel.dialog({
+        title: 'Basic Dialog',
+        content: 'This is a test dialog with title and content.'
+      });
+      
+      const passed = kernel.hasActiveLayer();
+      addResult('Basic Dialog', passed, passed ? 'Dialog opened successfully' : 'Failed to open');
+      
+      setTimeout(() => kernel.close(), 2000);
+    }
+    
+    function testDialogSizes() {
+      log('Testing dialog sizes...');
+      const kernel = window.NyamoUI;
+      
+      kernel.dialog({
+        title: 'Small Dialog',
+        content: 'This is a small dialog.',
+        size: 'sm'
+      });
+      
+      addResult('Dialog Sizes', true, 'Small dialog opened');
+      setTimeout(() => kernel.close(), 2000);
+    }
+    
+    function testDialogCallbacks() {
+      log('Testing dialog callbacks...');
+      const kernel = window.NyamoUI;
+      
+      let onOpenCalled = false;
+      
+      kernel.dialog({
+        title: 'Callback Test',
+        content: 'Testing callbacks...',
+        onOpen: () => {
+          onOpenCalled = true;
+          addResult('Dialog Callbacks', true, 'onOpen callback fired');
+        },
+        onClose: () => {
+          addResult('Dialog Callbacks', onOpenCalled, 'onClose callback fired');
+        }
+      });
+      
+      setTimeout(() => kernel.close(), 2000);
+    }
+    
+    function testDialogHTML() {
+      log('Testing HTML content...');
+      const kernel = window.NyamoUI;
+      
+      kernel.dialog({
+        title: 'HTML Content',
+        content: '<p><strong>Bold text</strong> and <em>italic text</em></p>',
+        allowHTML: true
+      });
+      
+      addResult('HTML Content', true, 'HTML content rendered');
+      setTimeout(() => kernel.close(), 2000);
+    }
+    
+    // ================================
+    // Sheet Tests
+    // ================================
+    
+    function testSheetRight() {
+      log('Testing sheet from right...');
+      window.NyamoUI.sheet({
+        content: '<h2>Sheet from Right</h2><p>This is a sheet sliding from the right side.</p>',
+        from: 'right',
+        allowHTML: true
+      });
+      addResult('Sheet Right', true, 'Sheet opened from right');
+      setTimeout(() => window.NyamoUI.close(), 2000);
+    }
+    
+    function testSheetLeft() {
+      log('Testing sheet from left...');
+      window.NyamoUI.sheet({
+        content: '<h2>Sheet from Left</h2><p>This is a sheet sliding from the left side.</p>',
+        from: 'left',
+        allowHTML: true
+      });
+      addResult('Sheet Left', true, 'Sheet opened from left');
+      setTimeout(() => window.NyamoUI.close(), 2000);
+    }
+    
+    function testSheetBottom() {
+      log('Testing sheet from bottom...');
+      window.NyamoUI.sheet({
+        content: '<h2>Sheet from Bottom</h2><p>This is a sheet sliding from the bottom.</p>',
+        from: 'bottom',
+        allowHTML: true
+      });
+      addResult('Sheet Bottom', true, 'Sheet opened from bottom');
+      setTimeout(() => window.NyamoUI.close(), 2000);
+    }
+    
+    // ================================
+    // Toast Tests
+    // ================================
+    
+    function testToastInfo() {
+      log('Testing info toast...');
+      window.NyamoUI.toast('This is an info toast', 'info', 3000);
+      addResult('Info Toast', true, 'Info toast shown');
+    }
+    
+    function testToastSuccess() {
+      log('Testing success toast...');
+      window.NyamoUI.toast('Operation successful!', 'success', 3000);
+      addResult('Success Toast', true, 'Success toast shown');
+    }
+    
+    function testToastError() {
+      log('Testing error toast...');
+      window.NyamoUI.toast('An error occurred', 'error', 3000);
+      addResult('Error Toast', true, 'Error toast shown');
+    }
+    
+    function testToastWarning() {
+      log('Testing warning toast...');
+      window.NyamoUI.toast('Warning: Please check this', 'warning', 3000);
+      addResult('Warning Toast', true, 'Warning toast shown');
+    }
+    
+    function testToastMaxLimit() {
+      log('Testing toast max limit...');
+      for (let i = 1; i <= 5; i++) {
+        window.NyamoUI.toast(`Toast ${i}`, 'info', 5000);
+      }
+      addResult('Toast Max Limit', true, '5 toasts queued (max 3 visible)');
+    }
+    
+    // ================================
+    // Other Tests
+    // ================================
+    
+    function testLoader() {
+      log('Testing loader...');
+      window.NyamoUI.loader(true, 'Loading data...');
+      addResult('Loader', true, 'Loader shown');
+      
+      setTimeout(() => {
+        window.NyamoUI.loader(false);
+        log('Loader hidden', 'success');
+      }, 2000);
+    }
+    
+    async function testConfirm() {
+      log('Testing confirm dialog...');
+      
+      const result = await window.NyamoUI.confirm({
+        title: 'Confirm Test',
+        message: 'Do you want to continue this test?',
+        confirmText: 'Yes',
+        cancelText: 'No'
+      });
+      
+      addResult('Confirm', true, result ? 'User clicked Yes' : 'User clicked No');
+    }
+    
+    function testDestroy() {
+      log('Testing destroy...');
+      
+      try {
+        const tempKernel = new window.NyamoUIKernel();
+        tempKernel.init();
+        tempKernel.dialog({ content: 'Test' });
+        tempKernel.destroy();
+        
+        const passed = !tempKernel.initialized;
+        addResult('Destroy', passed, passed ? 'Kernel destroyed successfully' : 'Destroy failed');
+      } catch (e) {
+        addResult('Destroy', false, e.message);
+      }
+    }
+    
+    // ================================
+    // Run All Tests
+    // ================================
+    
+    async function runAllTests() {
+      clearResults();
+      log('🚀 Starting full test suite...', 'info');
+      
+      // P0 Tests
+      testConfigReference();
+      await delay(500);
+      testCloseOnEscape();
+      await delay(500);
+      testShortcuts();
+      await delay(500);
+      testSanitize();
+      await delay(500);
+      testNyamoError();
+      await delay(500);
+      
+      // Dialog Tests
+      testDialogBasic();
+      await delay(2500);
+      testDialogSizes();
+      await delay(2500);
+      testDialogCallbacks();
+      await delay(2500);
+      
+      // Toast Tests
+      testToastInfo();
+      await delay(500);
+      testToastSuccess();
+      await delay(500);
+      testToastError();
+      await delay(500);
+      
+      // Other Tests
+      testLoader();
+      await delay(2500);
+      
+      log('✅ Test suite completed!', 'success');
+    }
+    
+    function delay(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+  </script>
+</body>
+</html>

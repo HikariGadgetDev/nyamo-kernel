@@ -1,0 +1,708 @@
+/* ================================
+   Nyamo UI Kernel v3.4 - Refined Styles
+   ================================
+   
+   @version 3.4.0
+   @license MIT
+   
+   Aligned with Nyamo UI Kernel v3.4:
+   - Classnames synced with kernel.js (OVERLAY / DIALOG / SHEET / TOAST / LOADER / SPINNER / CLOSE_BTN)
+   - Size modifiers: .ny-size-sm|md|lg|full
+   - Sheet directions: .ny-from-right|left|bottom
+   - Toast variants: .ny-toast-info|success|error|warning
+   - State flags: .ny-visible, .ny-no-scroll
+   - Modern CSS / A11y / dark-mode / reduced-motion 対応
+   ================================ */
+
+/* ================================
+   CSS Custom Properties
+   ================================ */
+:root {
+  /* Colors */
+  --ny-overlay-bg: rgba(0, 0, 0, 0.55);
+  --ny-dialog-bg: #ffffff;
+  --ny-sheet-bg: #ffffff;
+  --ny-toast-bg: #333333;
+  --ny-toast-text: #ffffff;
+  --ny-loader-bg: rgba(255, 255, 255, 0.98);
+  --ny-spinner-color: #3b82f6;
+  --ny-spinner-track: #e5e7eb;
+  --ny-border: rgba(0, 0, 0, 0.08);
+  --ny-text-primary: #1a1a1a;
+  --ny-text-secondary: #666666;
+  
+  /* Toast variants */
+  --ny-toast-info: #3b82f6;
+  --ny-toast-success: #10b981;
+  --ny-toast-error: #ef4444;
+  --ny-toast-warning: #f59e0b;
+  
+  /* Effects */
+  --ny-blur: 6px;
+  --ny-radius-sm: 6px;
+  --ny-radius-md: 12px;
+  --ny-radius-lg: 18px;
+  --ny-radius-xl: 20px;
+  
+  /* Shadows */
+  --ny-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --ny-shadow-md: 0 8px 24px rgba(0, 0, 0, 0.12);
+  --ny-shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.3), 0 10px 30px rgba(0, 0, 0, 0.15);
+  --ny-shadow-toast: 0 8px 24px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.15);
+  
+  /* Timing */
+  --ny-duration-fast: 0.15s;
+  --ny-duration-normal: 0.25s;
+  --ny-duration-slow: 0.35s;
+  --ny-ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --ny-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ny-ease-in: cubic-bezier(0, 0, 0.2, 1);
+  --ny-ease-out: cubic-bezier(0.4, 0, 1, 1);
+  
+  /* Z-index */
+  --ny-z-overlay: 2000;
+  --ny-z-layer: 2001;
+  --ny-z-toast: 3000;
+  
+  /* Spacing */
+  --ny-space-xs: 8px;
+  --ny-space-sm: 12px;
+  --ny-space-md: 16px;
+  --ny-space-lg: 20px;
+  --ny-space-xl: 24px;
+  --ny-space-2xl: 32px;
+  
+  /* Typography */
+  --ny-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --ny-text-sm: 0.875rem;
+  --ny-text-base: 0.95rem;
+  --ny-text-lg: 1.125rem;
+  --ny-text-xl: 1.25rem;
+  
+  /* Focus */
+  --ny-focus-ring: 0 0 0 3px rgba(59, 130, 246, 0.3);
+  --ny-focus-offset: 2px;
+}
+
+/* ================================
+   Base Reset
+   ================================ */
+.ny-overlay,
+.ny-dialog,
+.ny-sheet,
+.ny-toast,
+.ny-loader,
+.ny-close-btn {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.ny-overlay *,
+.ny-dialog *,
+.ny-sheet *,
+.ny-toast *,
+.ny-loader * {
+  box-sizing: inherit;
+}
+
+/* Font smoothing */
+.ny-overlay,
+.ny-dialog,
+.ny-sheet,
+.ny-toast,
+.ny-loader {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: var(--ny-font);
+  text-rendering: optimizeLegibility;
+}
+
+/* ================================
+   Overlay
+   ================================ */
+.ny-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--ny-z-overlay);
+  background: var(--ny-overlay-bg);
+  backdrop-filter: blur(var(--ny-blur));
+  -webkit-backdrop-filter: blur(var(--ny-blur));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--ny-space-md);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity var(--ny-duration-fast) var(--ny-ease-smooth),
+              visibility var(--ny-duration-fast) var(--ny-ease-smooth);
+  will-change: opacity;
+  contain: layout style paint;
+}
+
+.ny-overlay.ny-visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: all;
+}
+
+/* Fallback for browsers without backdrop-filter */
+@supports not (backdrop-filter: blur(1px)) {
+  .ny-overlay {
+    background: rgba(0, 0, 0, 0.75);
+  }
+}
+
+/* ================================
+   Body scroll lock
+   ================================ */
+.ny-no-scroll {
+  overflow: hidden !important;
+}
+
+@supports (scrollbar-gutter: stable) {
+  .ny-no-scroll {
+    scrollbar-gutter: stable;
+  }
+}
+
+/* ================================
+   Dialog
+   ================================ */
+.ny-dialog {
+  position: relative;
+  z-index: var(--ny-z-layer);
+  background: var(--ny-dialog-bg);
+  border-radius: var(--ny-radius-lg);
+  box-shadow: var(--ny-shadow-lg);
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: ny-dialog-enter var(--ny-duration-normal) var(--ny-ease-in);
+  will-change: transform, opacity;
+  contain: layout style paint;
+}
+
+/* Dialog size variants (DEFAULTS.DIALOG.SIZES) */
+.ny-dialog.ny-size-sm {
+  max-width: 400px;
+}
+
+.ny-dialog.ny-size-md {
+  max-width: 600px;
+}
+
+.ny-dialog.ny-size-lg {
+  max-width: 800px;
+}
+
+.ny-dialog.ny-size-full {
+  max-width: 95%;
+  max-height: 95vh;
+}
+
+/* Dialog header */
+.ny-dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--ny-space-md);
+  padding: var(--ny-space-lg) var(--ny-space-xl);
+  border-bottom: 1px solid var(--ny-border);
+  flex-shrink: 0;
+}
+
+.ny-dialog-header h2 {
+  margin: 0;
+  font-size: var(--ny-text-xl);
+  font-weight: 600;
+  color: var(--ny-text-primary);
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Dialog body */
+.ny-dialog-body {
+  flex: 1;
+  padding: var(--ny-space-xl);
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  contain: strict;
+}
+
+/* Dialog footer */
+.ny-dialog-footer {
+  display: flex;
+  gap: var(--ny-space-sm);
+  justify-content: flex-end;
+  align-items: center;
+  padding: var(--ny-space-md) var(--ny-space-xl);
+  border-top: 1px solid var(--ny-border);
+  flex-shrink: 0;
+}
+
+/* ================================
+   Close Button (.ny-close-btn)
+   ================================ */
+.ny-close-btn {
+  appearance: none;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--ny-text-secondary);
+  font-size: 28px;
+  line-height: 1;
+  border-radius: var(--ny-radius-sm);
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all var(--ny-duration-fast) var(--ny-ease-smooth);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ny-close-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--ny-text-primary);
+  transform: scale(1.05);
+}
+
+.ny-close-btn:active {
+  transform: scale(0.95);
+}
+
+.ny-close-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--ny-focus-ring);
+  outline-offset: var(--ny-focus-offset);
+}
+
+/* ================================
+   Sheet (.ny-sheet + .ny-from-*)
+   ================================ */
+.ny-sheet {
+  position: fixed;
+  z-index: var(--ny-z-layer);
+  background: var(--ny-sheet-bg);
+  box-shadow: var(--ny-shadow-lg);
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  will-change: transform;
+  contain: layout style paint;
+}
+
+.ny-sheet.ny-from-right {
+  top: 0;
+  right: 0;
+  width: 400px;
+  max-width: 90vw;
+  height: 100%;
+  animation: ny-sheet-right var(--ny-duration-normal) var(--ny-ease-in);
+}
+
+.ny-sheet.ny-from-left {
+  top: 0;
+  left: 0;
+  width: 400px;
+  max-width: 90vw;
+  height: 100%;
+  animation: ny-sheet-left var(--ny-duration-normal) var(--ny-ease-in);
+}
+
+.ny-sheet.ny-from-bottom {
+  bottom: 0;
+  left: 0;
+  right: 0;
+  max-height: 85vh;
+  border-radius: var(--ny-radius-xl) var(--ny-radius-xl) 0 0;
+  animation: ny-sheet-bottom var(--ny-duration-normal) var(--ny-ease-in);
+}
+
+/* ================================
+   Toast (.ny-toast, ny-toast-*)
+   ================================ */
+.ny-toast {
+  position: fixed;
+  bottom: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: var(--ny-z-toast);
+  background: var(--ny-toast-bg);
+  color: var(--ny-toast-text);
+  border-radius: var(--ny-radius-md);
+  box-shadow: var(--ny-shadow-toast);
+  min-width: 200px;
+  max-width: min(500px, calc(100vw - 2 * var(--ny-space-md)));
+  padding: 14px 20px;
+  text-align: center;
+  font-size: var(--ny-text-base);
+  font-weight: 500;
+  word-wrap: break-word;
+  opacity: 0;
+  pointer-events: none;
+  transition: all var(--ny-duration-slow) var(--ny-ease-smooth);
+  will-change: bottom, opacity, transform;
+  contain: layout style paint;
+}
+
+.ny-toast.ny-visible {
+  bottom: 32px;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Toast variants (DEFAULTS.TOAST.TYPES) */
+.ny-toast.ny-toast-info {
+  background: var(--ny-toast-info);
+}
+
+.ny-toast.ny-toast-success {
+  background: var(--ny-toast-success);
+}
+
+.ny-toast.ny-toast-error {
+  background: var(--ny-toast-error);
+}
+
+.ny-toast.ny-toast-warning {
+  background: var(--ny-toast-warning);
+  color: #1a1a1a;
+}
+
+/* Toast stacking */
+.ny-toast:nth-of-type(2) {
+  bottom: 104px;
+  transform: translateX(-50%) scale(0.95);
+  opacity: 0.8;
+}
+
+.ny-toast:nth-of-type(3) {
+  bottom: 168px;
+  transform: translateX(-50%) scale(0.9);
+  opacity: 0.6;
+}
+
+/* ================================
+   Loader (.ny-loader, .ny-spinner, .ny-loader-text)
+   ================================ */
+.ny-loader {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: var(--ny-space-md);
+  padding: 40px;
+  min-height: 200px;
+  background: var(--ny-loader-bg);
+  border-radius: var(--ny-radius-lg);
+}
+
+.ny-spinner {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 4px solid var(--ny-spinner-track);
+  border-top-color: var(--ny-spinner-color);
+  animation: ny-spin 0.8s linear infinite;
+  will-change: transform;
+}
+
+.ny-loader-text {
+  color: var(--ny-text-secondary);
+  font-size: var(--ny-text-base);
+  font-weight: 500;
+}
+
+/* ================================
+   Animations
+   ================================ */
+@keyframes ny-dialog-enter {
+  0% {
+    transform: scale(0.95) translateY(10px);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes ny-sheet-right {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes ny-sheet-left {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes ny-sheet-bottom {
+  0% {
+    transform: translateY(100%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes ny-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes ny-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* ================================
+   Scrollbar Styling
+   ================================ */
+.ny-dialog-body::-webkit-scrollbar,
+.ny-sheet::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.ny-dialog-body::-webkit-scrollbar-track,
+.ny-sheet::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.ny-dialog-body::-webkit-scrollbar-thumb,
+.ny-sheet::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  transition: background var(--ny-duration-fast);
+}
+
+.ny-dialog-body::-webkit-scrollbar-thumb:hover,
+.ny-sheet::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Firefox */
+.ny-dialog-body,
+.ny-sheet {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+/* ================================
+   Focus Management (scoped to Nyamo UI)
+   ================================ */
+.ny-overlay *:focus-visible,
+.ny-dialog *:focus-visible,
+.ny-sheet *:focus-visible,
+.ny-toast *:focus-visible,
+.ny-loader *:focus-visible {
+  outline: 2px solid var(--ny-toast-info);
+  outline-offset: 2px;
+}
+
+.ny-dialog:focus,
+.ny-sheet:focus {
+  outline: none;
+}
+
+/* ================================
+   Responsive Design
+   ================================ */
+
+/* Tablet */
+@media (max-width: 768px) {
+  .ny-dialog {
+    max-width: 95%;
+    margin: var(--ny-space-md);
+  }
+  
+  .ny-dialog-body {
+    padding: var(--ny-space-lg);
+  }
+  
+  .ny-dialog-header,
+  .ny-dialog-footer {
+    padding: var(--ny-space-md) var(--ny-space-lg);
+  }
+  
+  .ny-sheet.ny-from-right,
+  .ny-sheet.ny-from-left {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .ny-dialog.ny-size-full {
+    max-width: 100%;
+    max-height: 100vh;
+    min-height: 100vh;
+    border-radius: 0;
+    margin: 0;
+  }
+  
+  .ny-toast {
+    bottom: -100px;
+    left: var(--ny-space-sm);
+    right: var(--ny-space-sm);
+    transform: none;
+    max-width: none;
+  }
+  
+  .ny-toast.ny-visible {
+    bottom: var(--ny-space-sm);
+    transform: none;
+  }
+  
+  .ny-toast:nth-of-type(2),
+  .ny-toast:nth-of-type(3) {
+    display: none;
+  }
+}
+
+/* ================================
+   Reduced Motion
+   ================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .ny-spinner {
+    border-top-color: transparent;
+    border-right-color: var(--ny-spinner-color);
+    animation: ny-pulse 1s ease-in-out infinite !important;
+  }
+}
+
+/* ================================
+   Dark Mode
+   ================================ */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ny-overlay-bg: rgba(0, 0, 0, 0.75);
+    --ny-dialog-bg: #1f2937;
+    --ny-sheet-bg: #1f2937;
+    --ny-loader-bg: rgba(31, 41, 55, 0.98);
+    --ny-toast-bg: #374151;
+    --ny-border: rgba(255, 255, 255, 0.1);
+    --ny-text-primary: #f9fafb;
+    --ny-text-secondary: #9ca3af;
+    --ny-spinner-track: #374151;
+    --ny-spinner-color: #60a5fa;
+    --ny-shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.6), 0 10px 30px rgba(0, 0, 0, 0.3);
+  }
+  
+  .ny-close-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+  
+  .ny-dialog-body::-webkit-scrollbar-thumb,
+  .ny-sheet::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+  }
+  
+  .ny-dialog-body::-webkit-scrollbar-thumb:hover,
+  .ny-sheet::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+  
+  .ny-dialog-body,
+  .ny-sheet {
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+  }
+}
+
+/* ================================
+   High Contrast
+   ================================ */
+@media (prefers-contrast: high) {
+  :root {
+    --ny-border: currentColor;
+  }
+  
+  .ny-dialog,
+  .ny-sheet,
+  .ny-toast {
+    border: 2px solid currentColor;
+  }
+}
+
+/* ================================
+   RTL Support
+   ================================ */
+[dir="rtl"] .ny-sheet.ny-from-right {
+  right: auto;
+  left: 0;
+  animation-name: ny-sheet-left;
+}
+
+[dir="rtl"] .ny-sheet.ny-from-left {
+  left: auto;
+  right: 0;
+  animation-name: ny-sheet-right;
+}
+
+[dir="rtl"] .ny-dialog-footer {
+  flex-direction: row-reverse;
+}
+
+/* ================================
+   Print Styles
+   ================================ */
+@media print {
+  .ny-overlay,
+  .ny-dialog,
+  .ny-sheet,
+  .ny-toast,
+  .ny-loader {
+    display: none !important;
+  }
+  
+  .ny-no-scroll {
+    overflow: visible !important;
+  }
+}
+
+/* ================================
+   Performance Optimizations
+   ================================ */
+.ny-dialog,
+.ny-sheet,
+.ny-toast,
+.ny-spinner {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
