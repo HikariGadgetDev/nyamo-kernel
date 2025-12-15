@@ -208,7 +208,7 @@ Nyamo Kernelはこれらを
 - フレームワーク寿命に縛られたくない全ての開発者
 
 - 長期運用サービス
-- セキュリティ重視企業
+- セキュリティ重視企業  
 **※　テスト終了フェーズ以降の中規模開発での実用を視野に開発を進めております**
 
 ---
@@ -250,7 +250,7 @@ React / Vue / Svelte / SSR / 静的HTML上で動く
 > 脆弱で属人的なUI実装文化を解体し、  
 > 構造・契約・Web標準によって再構築することを意味しています。
 > 
-> We don’t fix people. We fix the civilization that keeps breaking them.
+> We don’t fix people. We fix the civilization that keeps breaking them.  
 > 人を正すのではない。人を壊し続けてきた文明の前提を、修正する。
 ---
 
