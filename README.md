@@ -242,6 +242,14 @@ React / Vue / Svelte / SSR / 静的HTML上で動く
 再実装の工数 → Kernelによる生産性モデルへ。
 
 ---
+> "vandalize the evil civilization" is a metaphor.  
+> It represents dismantling fragile UI practices and rebuilding them  
+> with structure, contracts, and web standards.
+>
+> 「vandalize the evil civilization」は比喩表現です。  
+> 脆弱で属人的なUI実装文化を解体し、  
+> 構造・契約・Web標準によって再構築することを意味しています。
+---
 
 # 9. License
 MIT License
