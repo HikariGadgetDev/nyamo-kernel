@@ -249,6 +249,9 @@ React / Vue / Svelte / SSR / 静的HTML上で動く
 > 「vandalize the evil civilization」は比喩表現です。  
 > 脆弱で属人的なUI実装文化を解体し、  
 > 構造・契約・Web標準によって再構築することを意味しています。
+> 
+> We don’t fix people. We fix the civilization that keeps breaking them.
+> 人を正すのではない。人を壊し続けてきた文明の前提を、修正する。
 ---
 
 # 9. License
